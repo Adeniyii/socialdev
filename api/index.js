@@ -6,10 +6,12 @@ const mongoose = require("mongoose");
 const userRoute = require("./routes/userRoute");
 const authRoute = require("./routes/authRoute");
 const { connectDB } = require("./controllers/db");
+const { verifyToken } = require("./middlewares/authJWT");
 require("dotenv").config();
 
 const { PORT, MONGO_URI } = process.env;
 const port = PORT || 8000;
+connectDB(MONGO_URI);
 
 const app = express();
 
@@ -21,7 +23,7 @@ app.use(helmet());
 
 // Routes
 app.get("/", (req, res) => res.json("Welcome peeps!"));
-app.use("/api/users", userRoute);
+app.use("/api/users", verifyToken, userRoute);
 app.use("/api/auth", authRoute);
 
 // Handle database reconnection error
@@ -32,5 +34,4 @@ mongoose.connection.on("error", (err) => {
 // Server
 app.listen(port, () => {
   console.log(`Listening on port ${port} ...`);
-  connectDB(MONGO_URI);
 });

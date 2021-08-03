@@ -2,10 +2,9 @@ const { Router, request, response } = require("express");
 const { genAccessToken, genRefreshToken } = require("../helpers/jwtHelpers");
 const { hashPassword, verifyPassword } = require("../helpers/passwordHelpers");
 const UserModel = require("../models/UserModel");
-require("dotenv").config();
 
 const router = Router();
-const { SECRET, REF_SECRET } = process.env;
+
 /**
  * Register a user to the database.
  * @param {request} req Express request object
@@ -57,8 +56,8 @@ async function loginUser(req, res) {
     }
 
     // Generate access & refresh tokens.
-    const accessToken = genAccessToken(SECRET, user);
-    const refreshToken = genRefreshToken(REF_SECRET, user);
+    const accessToken = genAccessToken(user);
+    const refreshToken = genRefreshToken(user);
 
     res.status(200).json({
       message: "Logged in successfully!",
