@@ -1,4 +1,5 @@
 const { Router } = require("express");
+const bcrypt = require("bcrypt");
 const UserModel = require("../models/UserModel");
 
 const router = Router();
@@ -6,10 +7,14 @@ const router = Router();
 router.post("/register", async (req, res) => {
   const { username, email, password } = req.body;
   try {
-    const newUser = await new UserModel({
+    // Hash user password
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(password, salt);
+
+    const newUser = new UserModel({
       username,
       email,
-      password,
+      password: hashedPassword,
     });
 
     const savedUser = await newUser.save();
