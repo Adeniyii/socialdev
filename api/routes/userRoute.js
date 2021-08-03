@@ -1,9 +1,18 @@
-const { Router } = require("express");
-
+const { Router, request, response } = require("express");
 const router = Router();
 
-router.get("/", (req, res) => {
-  return res.json("Welcome to users page!");
-});
+/**
+ * Get user information using provided id.
+ * @param {request} req Express request object
+ * @param {response} res Express response object
+ */
+async function getUser(req, res) {
+  const id = req.params.id;
+}
+
+// update a user
+// delete a user
+// follow a user
+// unfollow a user
 
 module.exports = router;

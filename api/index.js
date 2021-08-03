@@ -23,9 +23,10 @@ app.use(helmet());
 app.get("/", (req, res) => res.json("Welcome peeps!"));
 app.use("/api/users", userRoute);
 app.use("/api/auth", authRoute);
+
 // Handle database reconnection error
 mongoose.connection.on("error", (err) => {
-  console.log("error", error);
+  console.log("Reconnection error: ========== \n", error);
 });
 
 // Server
