@@ -1,6 +1,12 @@
 const mongoose = require("mongoose");
 require("dotenv").config();
 
+mongoose.set("returnOriginal", false);
+
+/**
+ * Connect to a mongo database.
+ * @param {String} url The database connection string
+ */
 async function connectDB(url) {
   try {
     const conn = await mongoose.connect(url, {

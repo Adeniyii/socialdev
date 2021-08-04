@@ -54,12 +54,14 @@ function genRefreshToken(user) {
  * @param {String} token Access token to be verified.
  */
 function verifyAccessToken(token) {
+  let verifiedUser;
   const verified = jwt.verify(token, SECRET, (err, user) => {
     if (err) {
       throw new Error("Token is not valid!");
     }
-    return user;
+    verifiedUser = user;
   });
+  return verifiedUser;
 }
 
 /**
@@ -67,12 +69,14 @@ function verifyAccessToken(token) {
  * @param {String} token Refresh token to be verified.
  */
 function verifyRefreshToken(token) {
+  let verifiedUser;
   const verified = jwt.verify(token, REF_SECRET, (err, user) => {
     if (err) {
       throw new Error("Token is not valid!");
     }
-    return user;
+    verifiedUser = user;
   });
+  return verifiedUser;
 }
 
 module.exports = {
