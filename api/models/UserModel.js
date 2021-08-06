@@ -47,6 +47,7 @@ const UserSchema = new Schema(
     city: {
       type: String,
       max: 50,
+      required: true,
     },
     from: {
       type: String,

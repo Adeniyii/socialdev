@@ -15,16 +15,13 @@ const router = Router();
  * @param {response} res Express response object
  */
 async function registerUser(req, res) {
-  const { username, email, password } = req.body;
+  const input = req.body;
   try {
     // Hash user password
-    const hashedPassword = await hashPassword(password);
+    const hashedPassword = await hashPassword(input.password);
+    input.password = hashedPassword;
 
-    const newUser = new UserModel({
-      username,
-      email,
-      password: hashedPassword,
-    });
+    const newUser = new UserModel(input);
 
     const savedUser = await newUser.save();
     res
