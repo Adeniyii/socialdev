@@ -151,8 +151,7 @@ async function getTimeline(req, res) {
         return post;
       })
     );
-    const timeline = userPosts.concat(followingPosts);
-    console.log("timeline posts", ...timeline);
+    const timeline = userPosts.concat(...followingPosts);
     return res
       .status(200)
       .json({ message: "Timeline fetched successfully!", data: timeline });

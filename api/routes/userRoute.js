@@ -107,9 +107,7 @@ async function followUser(req, res) {
 
     await UserModel.findByIdAndUpdate(id, { $push: { followers: userID } });
 
-    res
-      .status(201)
-      .json({ message: "User followed successfully!", data: user });
+    res.status(201).json({ message: "User followed successfully!" });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
@@ -146,9 +144,7 @@ async function unfollowUser(req, res) {
     });
     await UserModel.findByIdAndUpdate(id, { $pull: { followers: userID } });
 
-    res
-      .status(200)
-      .json({ message: "User was unfollowed successfully!", data: user });
+    res.status(200).json({ message: "User was unfollowed successfully!" });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
