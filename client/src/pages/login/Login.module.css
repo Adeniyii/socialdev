@@ -1,0 +1,43 @@
+.login-section {
+  display: flex;
+  height: 95vh;
+  justify-content: center;
+  align-items: center;
+  gap: 7em;
+  background-color: #f0f2f5;
+}
+
+.login-form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.login-header {
+  font-size: 3.8rem;
+  font-weight: 800;
+  margin-bottom: 10px;
+  letter-spacing: -1px;
+  color: #1877f2;
+}
+
+.login-welcome {
+  font-size: 28px;
+}
+
+.login-welcome span {
+  display: block;
+}
+
+.right-section {
+  width: 350px;
+  padding: 20px;
+  background-color: #fff;
+  border-radius: 8px;
+  text-align: center;
+  box-shadow: 0 2px 4px rgb(0 0 0 / 10%), 0 8px 16px rgb(0 0 0 / 10%);
+}
+
+.divider {
+  opacity: 0.4;
+}
