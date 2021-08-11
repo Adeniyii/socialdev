@@ -4,7 +4,6 @@ import { UserContext } from "../context/UserContext";
 
 const ProtectedRoute = ({ component: Component, ...rest }) => {
   const userObj = useContext(UserContext);
-  console.log("userObj protected: ", userObj);
 
   return (
     <Route

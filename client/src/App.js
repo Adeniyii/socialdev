@@ -16,6 +16,7 @@ function App() {
           <Route exact path="/" component={Home} />
           <AuthRoute path="/login" component={Login} />
           <ProtectedRoute path="/profile" component={Profile} />
+          <Route path="*" render={() => "404 Not Found"} />
         </Switch>
       </Router>
     </div>
