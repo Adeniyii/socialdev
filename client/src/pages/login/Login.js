@@ -1,9 +1,10 @@
-import React, { useContext, useState } from "react";
-import styles from "./Login.module.css";
-import { TextField, Button, Typography, Link } from "@material-ui/core";
-import { makeStyles } from "@material-ui/core/styles";
 import axios from "axios";
+import styles from "./Login.module.css";
+import React, { useContext } from "react";
+import { makeStyles } from "@material-ui/core/styles";
 import { UserContext } from "../../context/UserContext";
+import { TextField, Button, Typography, Link } from "@material-ui/core";
+import useForm from "../../hooks/useForm";
 
 // Styles for material-ui components
 const useStyles = makeStyles((theme) => ({
@@ -37,19 +38,28 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const Login = () => {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const user = useContext(UserContext);
+const Login = (props) => {
+  const [values, handleChange] = useForm({ email: "", password: "" });
+  const userObj = useContext(UserContext);
   const classes = useStyles();
+
+  console.log(userObj.user);
 
   const handleLogin = async (e) => {
     e.preventDefault();
-    // const response = axios.post("http://localhost:8000/api/auth/login", {
-    //   email,
-    //   password,
-    // });
-    console.log("submittt");
+    try {
+      const response = await axios.post(
+        "http://localhost:8000/api/auth/login",
+        {
+          email: values.email,
+          password: values.password,
+        }
+      );
+      userObj.setUser(response.data);
+      props.history.push("/profile");
+    } catch (error) {
+      console.log("login error: ", error);
+    }
   };
 
   return (
@@ -69,8 +79,8 @@ const Login = () => {
             variant="outlined"
             className={classes.input}
             name="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
+            value={values.email}
+            onChange={handleChange}
           />
           <TextField
             id="outlined-basic"
@@ -79,8 +89,8 @@ const Login = () => {
             variant="outlined"
             className={classes.input}
             name="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
+            value={values.password}
+            onChange={handleChange}
           />
           <Button
             variant="contained"

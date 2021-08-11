@@ -3,7 +3,7 @@ const morgan = require("morgan");
 const helmet = require("helmet");
 const express = require("express");
 const mongoose = require("mongoose");
-const cookieParser = require("cookie-parse");
+// const cookieParser = require("cookie-parse");
 const userRoute = require("./routes/userRoute");
 const authRoute = require("./routes/authRoute");
 const postRoute = require("./routes/postRoute");
@@ -22,7 +22,7 @@ app.use(morgan("common"));
 app.use(express.json());
 app.use(helmet());
 app.use(cors());
-app.use(cookieParser());
+// app.use(cookieParser());
 
 // Routes
 app.get("/", (req, res) => res.json("Welcome peeps!"));

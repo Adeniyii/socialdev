@@ -38,16 +38,16 @@ async function registerUser(req, res) {
  * @param {response} res Express response object.
  */
 async function loginUser(req, res) {
-  const { username, password } = req.body;
+  const { email, password } = req.body;
 
   try {
-    const user = await UserModel.findOne({ username: username });
+    const user = await UserModel.findOne({ email: email });
 
-    // Check username exists.
+    // Check email exists.
     if (!user) {
       return res
         .status(404)
-        .json({ message: "Invalid username. Please try again!" });
+        .json({ message: "Invalid email. Please try again!" });
     }
 
     // Validate password.
