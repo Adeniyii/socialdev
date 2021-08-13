@@ -1,24 +1,26 @@
 const { response, request } = require("express");
 const jwt = require("jsonwebtoken");
 const { verifyAccessToken } = require("../helpers/jwtHelpers");
+const UserModel = require("../models/UserModel");
 /**
  * Verify if a user is authorized.
  * @param {request} req Express request object.
  * @param {response} res Express response object.
  */
-function verifyToken(req, res, next) {
-  const token = req.headers.authorization;
-
-  if (!token) {
+async function isAuthenticated(req, res, next) {
+  if (!req.session && !req.session.userID) {
     return res.status(401).json({ message: "You are not authenticated!" });
   }
+
   try {
-    const user = verifyAccessToken(token);
-    req.user = user;
+    const user = await UserModel.findById(req.session.userID);
+    if (!user) {
+      return res.status(403).json({ message: "You are not authorized!" });
+    }
     next();
   } catch (error) {
-    res.status(403).json({ message: error.message });
+    res.status(500).json({ message: error.message });
   }
 }
 
-module.exports = { verifyToken };
+module.exports = { isAuthenticated };
