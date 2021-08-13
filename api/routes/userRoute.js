@@ -80,14 +80,16 @@ async function deleteUser(req, res) {
     }
     await UserModel.findByIdAndDelete(id);
     // Expire cookie & destroy session.
-    req.session.cookie.maxAge = 0;
     req.session.destroy((err) => {
       if (err) {
         throw err;
       }
     });
 
-    return res.status(200).json({ message: "User deleted successfully!" });
+    return res
+      .clearCookie("connect.sid")
+      .status(200)
+      .json({ message: "User deleted successfully!" });
   } catch (error) {
     return res.status(500).json({ message: error.message });
   }

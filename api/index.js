@@ -28,12 +28,13 @@ app.use(
     secret: SECRET,
     saveUninitialized: false,
     resave: false,
+    // rolling: true,
     store: MongoStore.create({
       mongoUrl: MONGO_URI,
       touchAfter: 3600, //seconds
     }),
     cookie: {
-      maxAge: 1000 * 60 * 60 * 24 * 7,
+      maxAge: 1000 * 60 * 3,
       secure: process.env.NODE_ENV === "production" ? true : false,
     },
   })
