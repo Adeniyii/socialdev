@@ -13,8 +13,10 @@ async function getUser(req, res) {
 
   try {
     const user = await UserModel.findById(id);
-    if (!user) return res.status(400).json({ message: "No user was found!" });
-    res.status(200).json({ message: "User found successfully!", data: user });
+    if (!user) return res.status(404).json({ message: "No user was found!" });
+    res
+      .status(200)
+      .json({ message: "User found successfully!", payload: user });
   } catch (error) {
     return res.status(500).json({ message: error.message });
   }
@@ -27,30 +29,35 @@ async function getUser(req, res) {
  */
 async function updateUser(req, res) {
   const id = req.params.id;
-  const user = req.user;
+  const userID = req.session.userID;
 
-  if (id !== user.userID && !user.isAdmin) {
-    return res
-      .status(403)
-      .json({ message: "You can only update your account!" });
-  }
+  try {
+    const user = UserModel.findById(userID);
 
-  // Update password if password was changed.
-  if (req.body.password) {
-    try {
+    // If non-admin is trying to update another user's account.
+    if (id !== userID && !user.isAdmin) {
+      return res
+        .status(403)
+        .json({ message: "You can only update your account!" });
+    }
+
+    // Update password if password was changed.
+    if (req.body.password) {
       // Hash password
       const hashedPW = await hashPassword(req.body.password);
       req.body.password = hashedPW;
-    } catch (error) {
-      return res.status(500).json({ message: error.message });
     }
-  }
 
-  // Update user
-  const updatedUser = await UserModel.findByIdAndUpdate(id, { $set: req.body });
-  return res
-    .status(200)
-    .json({ message: "User updated successfully!", data: updatedUser });
+    const updatedUser = await UserModel.findByIdAndUpdate(id, {
+      $set: req.body,
+    });
+    // Update user
+    return res
+      .status(200)
+      .json({ message: "User updated successfully!", data: updatedUser });
+  } catch (error) {
+    return res.status(500).json({ message: error.message });
+  }
 }
 
 /**
@@ -60,19 +67,27 @@ async function updateUser(req, res) {
  */
 async function deleteUser(req, res) {
   const id = req.params.id;
-  const user = req.user;
-
-  if (id !== user.userID && !user.isAdmin) {
-    return res
-      .status(403)
-      .json({ message: "You can only delete your account!" });
-  }
+  const userID = req.session.userID;
 
   try {
-    const deletedUser = await UserModel.findByIdAndDelete(id);
-    res
-      .status(201)
-      .json({ message: "User deleted successfully!", data: deletedUser });
+    const user = await UserModel.findById(userID);
+
+    // If non-admin is trying to update another user's account.
+    if (id !== userID && !user.isAdmin) {
+      return res
+        .status(403)
+        .json({ message: "You can only delete your account!" });
+    }
+    await UserModel.findByIdAndDelete(id);
+    // Expire cookie & destroy session.
+    req.session.cookie.maxAge = 0;
+    req.session.destroy((err) => {
+      if (err) {
+        throw err;
+      }
+    });
+
+    return res.status(200).json({ message: "User deleted successfully!" });
   } catch (error) {
     return res.status(500).json({ message: error.message });
   }
@@ -85,7 +100,7 @@ async function deleteUser(req, res) {
  */
 async function followUser(req, res) {
   const id = req.params.id;
-  const userID = req.user.userID;
+  const userID = req.session.userID;
 
   if (id === userID) {
     return res.status(403).json({ message: "You cannot follow yourself!" });
@@ -107,9 +122,7 @@ async function followUser(req, res) {
 
     await UserModel.findByIdAndUpdate(id, { $push: { followers: userID } });
 
-    res
-      .status(201)
-      .json({ message: "User followed successfully!", data: user });
+    res.status(201).json({ message: "User followed successfully!" });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
@@ -122,9 +135,9 @@ async function followUser(req, res) {
  */
 async function unfollowUser(req, res) {
   const id = req.params.id;
-  const { userID } = req.user;
+  const { userID } = req.session;
 
-  if (id === req.user.userID) {
+  if (id === userID) {
     res.status(403).json({ message: "You cannot unfollow yourself!" });
   }
 
@@ -146,9 +159,7 @@ async function unfollowUser(req, res) {
     });
     await UserModel.findByIdAndUpdate(id, { $pull: { followers: userID } });
 
-    res
-      .status(200)
-      .json({ message: "User was unfollowed successfully!", data: user });
+    res.status(200).json({ message: "User was unfollowed successfully!" });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }

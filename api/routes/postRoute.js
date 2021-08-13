@@ -10,18 +10,16 @@ const router = Router();
  * @param {response} res Express response object.
  */
 async function newPost(req, res) {
-  const user = req.user;
+  const userID = req.session.userID;
 
   try {
     const newPost = await PostModel({
       ...req.body,
-      userID: user.userID,
+      userID,
     });
 
     const savedPost = await newPost.save();
-    return res
-      .status(201)
-      .json({ message: "Post created successfully!", data: savedPost });
+    return res.status(201).json({ message: "Post created successfully!" });
   } catch (error) {
     return res.status(500).json({ message: error.message });
   }
@@ -34,16 +32,17 @@ async function newPost(req, res) {
  */
 async function updatePost(req, res) {
   const update = req.body;
-  const user = req.user;
   const postID = req.params.id;
+  const userID = req.session.userID;
 
   try {
+    const user = await UserModel.findById(userID);
     const originalPost = await PostModel.findById(postID);
     if (!originalPost) {
-      return res.status(400).json({ message: "This post does not exist!" });
+      return res.status(404).json({ message: "This post does not exist!" });
     }
 
-    if (originalPost.userID !== user.userID && !user.isAdmin) {
+    if (originalPost.userID !== userID && !user.isAdmin) {
       return res
         .status(403)
         .json({ message: "You are not allowed to edit this post!" });
@@ -64,16 +63,17 @@ async function updatePost(req, res) {
  * @param {response} res Express response object.
  */
 async function deletePost(req, res) {
-  const user = req.user;
   const postID = req.params.id;
+  const userID = req.session.userID;
 
   try {
+    const user = await UserModel.findById(userID);
     const originalPost = await PostModel.findById(postID);
     if (!originalPost) {
-      return res.status(400).json({ message: "This post does not exist!" });
+      return res.status(404).json({ message: "This post does not exist!" });
     }
 
-    if (originalPost.userID !== user.userID && !user.isAdmin) {
+    if (originalPost.userID !== userID && !user.isAdmin) {
       return res
         .status(403)
         .json({ message: "You are not allowed to delete this post!" });
@@ -93,21 +93,26 @@ async function deletePost(req, res) {
  */
 async function likePost(req, res) {
   const postID = req.params.id;
-  const user = req.user;
+  const userID = req.session.userID;
 
   try {
     const post = await PostModel.findById(postID);
-    if (post.likes.includes(user.userID)) {
+
+    if (!post) {
+      return res.status(404).json({ message: "Post not found!" });
+    }
+    // Dislike post if user already likes post.
+    if (post.likes.includes(userID)) {
       await PostModel.findByIdAndUpdate(postID, {
-        $pull: { likes: user.userID },
+        $pull: { likes: userID },
       });
       return res.status(200).json({
         message: "You unliked a post successfully!",
       });
     }
-
+    // Like post otherwise
     await PostModel.findByIdAndUpdate(postID, {
-      $push: { likes: user.userID },
+      $push: { likes: userID },
     });
     return res.status(200).json({ message: "You liked a post successfully!" });
   } catch (error) {
@@ -122,13 +127,17 @@ async function likePost(req, res) {
  */
 async function getPost(req, res) {
   const postID = req.params.id;
-  const user = req.user;
+  const userID = req.session.userID;
 
   try {
     const post = await PostModel.findById(postID);
+    if (!post) {
+      return res.status(404).json({ message: "Post not found!" });
+    }
+
     return res
       .status(200)
-      .json({ message: "Post fetched successfully!", data: post });
+      .json({ message: "Post fetched successfully!", payload: post });
   } catch (error) {
     return res.status(500).json({ message: error.message });
   }
@@ -140,22 +149,21 @@ async function getPost(req, res) {
  * @param {response} res Express response object.
  */
 async function getTimeline(req, res) {
-  const user = req.user;
+  const userID = req.session.userID;
 
   try {
-    const { following } = await UserModel.findById(user.userID);
-    const userPosts = await PostModel.find({ userID: user.userID });
+    const { following } = await UserModel.findById(userID);
+    const userPosts = await PostModel.find({ userID: userID });
     const followingPosts = await Promise.all(
-      following.map((userID) => {
-        const post = PostModel.find({ userID: userID });
+      following.map((userIDs) => {
+        const post = PostModel.find({ userID: userIDs });
         return post;
       })
     );
-    const timeline = userPosts.concat(followingPosts);
-    console.log("timeline posts", ...timeline);
+    const timeline = userPosts.concat(...followingPosts);
     return res
       .status(200)
-      .json({ message: "Timeline fetched successfully!", data: timeline });
+      .json({ message: "Timeline fetched successfully!", payload: timeline });
   } catch (error) {
     return res.status(500).json({ message: error.message });
   }

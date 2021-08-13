@@ -24,9 +24,7 @@ async function registerUser(req, res) {
     const newUser = new UserModel(input);
 
     const savedUser = await newUser.save();
-    res
-      .status(200)
-      .json({ message: "Registration successful!", data: savedUser });
+    res.status(200).json({ message: "Registration successful!" });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
@@ -38,33 +36,36 @@ async function registerUser(req, res) {
  * @param {response} res Express response object.
  */
 async function loginUser(req, res) {
-  const { username, password } = req.body;
+  const { email, password } = req.body;
 
   try {
-    const user = await UserModel.findOne({ username: username });
+    const user = await UserModel.findOne({ email: email });
 
-    // Check username exists.
+    // Check email exists.
     if (!user) {
       return res
-        .status(404)
-        .json({ message: "Invalid username. Please try again!" });
+        .status(401)
+        .json({ message: "Invalid email. Please try again!" });
     }
 
     // Validate password.
     const decodedPassword = await verifyPassword(password, user.password);
     if (!decodedPassword) {
       return res
-        .status(400)
+        .status(401)
         .json({ message: "Invalid password. Please try again!" });
     }
 
+    // Store userID on session
+    req.session.userID = user.id;
+
     // Generate access & refresh tokens.
-    const accessToken = genAccessToken(user);
-    const refreshToken = genRefreshToken(user);
+    // const accessToken = genAccessToken(user);
+    // const refreshToken = genRefreshToken(user);
 
     res.status(200).json({
       message: "Logged in successfully!",
-      data: { user, accessToken, refreshToken },
+      payload: { user },
     });
   } catch (error) {
     res.status(500).json({ message: error.message });

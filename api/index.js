@@ -3,14 +3,16 @@ const morgan = require("morgan");
 const helmet = require("helmet");
 const express = require("express");
 const mongoose = require("mongoose");
+const session = require("express-session");
+const MongoStore = require("connect-mongo");
 const userRoute = require("./routes/userRoute");
 const authRoute = require("./routes/authRoute");
 const postRoute = require("./routes/postRoute");
 const { connectDB } = require("./controllers/db");
-const { verifyToken } = require("./middlewares/authJWT");
+const { isAuthenticated } = require("./middlewares/auth");
 require("dotenv").config();
 
-const { PORT, MONGO_URI } = process.env;
+const { PORT, MONGO_URI, SECRET } = process.env;
 const port = PORT || 8000;
 connectDB(MONGO_URI);
 
@@ -21,12 +23,29 @@ app.use(morgan("common"));
 app.use(express.json());
 app.use(helmet());
 app.use(cors());
+app.use(
+  session({
+    secret: SECRET,
+    saveUninitialized: false,
+    resave: false,
+    store: MongoStore.create({
+      mongoUrl: MONGO_URI,
+      touchAfter: 3600, //seconds
+    }),
+    cookie: {
+      maxAge: 1000 * 60 * 60 * 24 * 7,
+      secure: process.env.NODE_ENV === "production" ? true : false,
+    },
+  })
+);
 
 // Routes
-app.get("/", (req, res) => res.json("Welcome peeps!"));
+app.get("/", (req, res) => {
+  return res.json("Welcome peeps!");
+});
 app.use("/api/auth", authRoute);
-app.use("/api/users", verifyToken, userRoute);
-app.use("/api/post", verifyToken, postRoute);
+app.use("/api/users", isAuthenticated, userRoute);
+app.use("/api/post", isAuthenticated, postRoute);
 
 // Handle database reconnection error
 mongoose.connection.on("error", (err) => {
