@@ -1,19 +1,35 @@
-import React, { useContext } from "react";
-import { Route } from "react-router-dom";
-import { UserContext } from "../context/UserContext";
+import React from "react";
+import { Route, Redirect } from "react-router-dom";
+import useFetch from "../hooks/useFetch";
 
 const AuthRoute = ({ component: Component, ...rest }) => {
-  const userObj = useContext(UserContext);
+  console.log("auth route rendered...");
+  const { data, error } = useFetch("/api/users/current");
 
   return (
     <Route
       {...rest}
       render={(props) => {
-        if (!userObj.user) {
-          return <Component {...rest} {...props} />;
-        } else {
-          props.history.push("/");
-        }
+        return (
+          <div>
+            {error && <Component {...rest} {...props} />}
+            {data && (
+              <Redirect
+                to={{
+                  pathname: "/profile",
+                  state: {
+                    from: props.location,
+                  },
+                }}
+              />
+            )}
+          </div>
+        );
+        // if (response.error && response.payload) {
+        //   return <Component {...rest} {...props} />;
+        // } else if (!response.error && response.payload) {
+        //   props.history.push("/profile");
+        // }
       }}
     />
   );

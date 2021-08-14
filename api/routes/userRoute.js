@@ -4,6 +4,28 @@ const UserModel = require("../models/UserModel");
 const router = Router();
 
 /**
+ * Get the current user's information using id from session.
+ * @param {request} req Express request object
+ * @param {response} res Express response object
+ */
+async function getCurrentUser(req, res) {
+  const userID = req.session.userID;
+
+  try {
+    const user = await UserModel.findById(userID);
+    if (!user)
+      return res
+        .status(404)
+        .json({ message: "No user was found!", payload: null });
+    res
+      .status(200)
+      .json({ message: "User found successfully!", payload: user });
+  } catch (error) {
+    return res.status(500).json({ message: error.message });
+  }
+}
+
+/**
  * Get user information using provided id.
  * @param {request} req Express request object
  * @param {response} res Express response object
@@ -167,6 +189,7 @@ async function unfollowUser(req, res) {
   }
 }
 
+router.get("/current", getCurrentUser);
 router.route("/:id").get(getUser).put(updateUser).delete(deleteUser);
 router.put("/:id/follow", followUser).put("/:id/unfollow", unfollowUser);
 
