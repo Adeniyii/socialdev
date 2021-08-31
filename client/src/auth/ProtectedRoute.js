@@ -3,6 +3,7 @@ import { Route, Redirect } from "react-router-dom";
 import useFetch from "../hooks/useFetch";
 
 const ProtectedRoute = ({ component: Component, ...rest }) => {
+  console.log("protected route rendered...");
   const { data, error } = useFetch("/api/users/current");
 
   return (

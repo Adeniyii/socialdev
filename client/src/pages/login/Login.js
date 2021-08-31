@@ -17,6 +17,10 @@ const Login = (props) => {
   const [isLoading, setLoading] = useState(false);
   const classes = useStyles();
 
+  /**
+   * Handle form submit event.
+   * @param {event} e
+   */
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
@@ -27,7 +31,7 @@ const Login = (props) => {
       });
       console.log("user: ", response.data.payload);
       setLoading(false);
-      props.history.push("/profile");
+      props.history.push("/");
     } catch (error) {
       console.log("login error: ", error);
     }

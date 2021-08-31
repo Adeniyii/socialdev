@@ -10,16 +10,16 @@ export const useStyles = makeStyles((theme) => ({
     // padding: "13px",
     textTransform: "none",
     fontSize: "1.2rem",
-    fontWeight: "500",
-    borderRadius: "8px",
+    fontWeight: "700",
+    borderRadius: "5px",
   },
   buttonsec: {
     textTransform: "none",
     fontSize: "1rem",
-    fontWeight: "500",
+    fontWeight: "700",
     backgroundColor: "#42b72a",
     color: "#fff",
-    borderRadius: "8px",
+    borderRadius: "5px",
     marginTop: "20px",
     "&:hover": {
       backgroundColor: "#2f8c1c",
@@ -29,9 +29,15 @@ export const useStyles = makeStyles((theme) => ({
     fontSize: "0.9rem",
   },
   linkTypo: {
-    margin: "20px 0",
+    margin: "15px 0",
   },
-  input: {
-    borderRadius: "10px",
+  navbar: {
+    backgroundColor: "#fff",
+    color: "#000",
+    boxShadow: "0 0 0 rgb(0 0 0 / 10%), 0 0 10px rgb(0 0 0 / 10%)",
+  },
+  toolbar: {
+    display: "flex",
+    justifyContent: "center",
   },
 }));
