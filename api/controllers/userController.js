@@ -193,6 +193,6 @@ module.exports = {
   getUser,
   updateUser,
   deleteUser,
-  followUser
+  followUser,
   unfollowUser,
 };

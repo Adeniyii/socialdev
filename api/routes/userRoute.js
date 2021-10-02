@@ -9,7 +9,7 @@ const {
 } = require("../controllers/userController");
 const router = Router();
 
-router.get("/current", getCurrentUserntUser);
+router.get("/current", getCurrentUser);
 router.route("/:id").get(getUser).put(updateUser).delete(deleteUser);
 router.put("/:id/follow", followUser).put("/:id/unfollow", unfollowUser);
 
