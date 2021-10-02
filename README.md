@@ -30,15 +30,13 @@ npm run dev
 yarn run dev
 ```
 
-Server will be running @ [http://127.0.0.1:4000](http://127.0.0.1:4000)
+Server will be running @ [http://127.0.0.1:8000](http://127.0.0.1:8000)
 
 ## Getting Started With the Frontend/Client (React)
 
 Install dependencies in the root folder,
 
-cd into the server-client folder,  and install the dependencies,
-
-cd into the client folder,  and install the client's dependencies
+cd into the client folder, and install the client's dependencies,
 
 ```bash
 yarn install
@@ -47,30 +45,16 @@ yarn install
 Run the frontend development server using either of the following commands from the root folder:
 
 ```bash
-npm run client:dev
+npm start
 # or
-yarn run client:dev
+yarn start
 ```
 
-Open [http://localhost:9000](http://localhost:9000) with your browser to see the result.
-
-## Concurrently Run Both (React & Node)
-
-make sure you are in the root folder
-
-Run the development server using either of the following commands:
-
-```bash
-npm run dev
-# or
-yarn run dev
-```
-
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the frontend result and your server would be listening on [http://localhost:4000](http://localhost:4000).
+Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
 ### CONTRIBUTION GUIDE
 
-1. Fork the central repository, i.e the team's general repository.
+1. Fork the central repository.
 
 2. After forking it will appear in your personal profile, copy the url and open your favorite code editor, add the forked repo to your local machine using the git command - git clone (url of repo you copied) on your terminal.
 
@@ -78,7 +62,7 @@ Open [http://localhost:3000](http://localhost:3000) with your browser to see the
 
    - the upstream is named origin by default
 
-3. Create a new branch for the task you are assigned to with a descriptive branch name, using the git command: git checkout -b (branch name)
+3. Create a new branch for a feature you want to work on, with a descriptive branch name, using the git command: git checkout -b (branch name)
 
 4. After implementation, use the git command -: git add . or git add -A or git add (the file name) to effect changes you've made to the branch
 
