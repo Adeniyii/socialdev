@@ -1,27 +1,34 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 
-const useFetch = (url, skip = true, params = {}, headers = {}) => {
-  const [state, setState] = useState({
-    isLoading: false,
-    data: null,
-    error: null,
-  });
+const useFetch = (url, skip = false) => {
+  const [data, setData] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  console.log("usefetch rendered...");
 
   useEffect(() => {
-    if (skip) return;
-    setState({ isLoading: true, data: null, error: null });
-    axios
-      .get(url, { ...params }, { ...headers })
-      .then((payload) => {
-        setState({ isLoading: false, data: payload, error: null });
-      })
-      .catch((err) => {
-        setState({ isLoading: false, data: null, error: err });
-      });
-  }, [url, params, skip, headers]);
+    if (!skip) {
+      const source = axios.CancelToken.source();
 
-  return state;
+      axios
+        .get(url, { cancelToken: source.token })
+        .then((payload) => {
+          setLoading(false);
+          setData(payload.data);
+        })
+        .catch((err) => {
+          setError(err.message);
+        });
+      // Clean up pending requests.
+      return () => {
+        source.cancel();
+      };
+    }
+  }, [url, skip]);
+
+  return { data, loading, error };
 };
 
 export default useFetch;

@@ -1,7 +1,6 @@
 import axios from "axios";
 import styles from "./Login.module.css";
-import React, { useContext, useEffect, useState } from "react";
-import { UserContext } from "../../context/UserContext";
+import React, { useState } from "react";
 import {
   TextField,
   Button,
@@ -11,36 +10,28 @@ import {
   CircularProgress,
 } from "@material-ui/core";
 import useForm from "../../hooks/useForm";
-import { useStyles } from "./customStyles";
+import { useStyles } from "../../customStyles";
 
 const Login = (props) => {
   const [values, handleChange] = useForm({ email: "", password: "" });
-  const [user, setUser] = useState(null);
   const [isLoading, setLoading] = useState(false);
-  const userObj = useContext(UserContext);
   const classes = useStyles();
-  console.log(user);
 
-  useEffect(() => {
-    if (user) {
-      userObj.setUser(user);
-      props.history.push("/profile");
-    }
-  }, [user, props.history, userObj]);
-
+  /**
+   * Handle form submit event.
+   * @param {event} e
+   */
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
       setLoading(true);
-      const response = await axios.post(
-        "http://localhost:8000/api/auth/login",
-        {
-          email: values.email,
-          password: values.password,
-        }
-      );
+      const response = await axios.post("/api/auth/login", {
+        email: values.email,
+        password: values.password,
+      });
+      console.log("user: ", response.data.payload);
       setLoading(false);
-      setUser(response.data);
+      props.history.push("/");
     } catch (error) {
       console.log("login error: ", error);
     }

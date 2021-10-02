@@ -22,4 +22,8 @@ async function connectDB(url) {
   }
 }
 
-module.exports = { connectDB };
+function closeDB() {
+  return mongoose.disconnect();
+}
+
+module.exports = { connectDB, closeDB };

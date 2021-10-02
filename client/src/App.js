@@ -1,6 +1,6 @@
 import Home from "./pages/home/Home";
 import Login from "./pages/login/Login";
-import Navbar from "./components/Navbar";
+// import Navbar from "./components/Navbar";
 import React from "react";
 import Profile from "./pages/profile/Profile";
 import ProtectedRoute from "./auth/ProtectedRoute";
@@ -11,9 +11,9 @@ function App() {
   return (
     <div>
       <Router>
-        <Navbar />
+        {/* <Navbar /> */}
         <Switch>
-          <Route exact path="/" component={Home} />
+          <ProtectedRoute exact path="/" component={Home} />
           <AuthRoute path="/login" component={Login} />
           <ProtectedRoute path="/profile" component={Profile} />
           <Route path="*" render={() => "404 Not Found"} />

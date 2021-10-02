@@ -1,19 +1,30 @@
-import React, { useContext } from "react";
-import { Route } from "react-router-dom";
-import { UserContext } from "../context/UserContext";
+import React from "react";
+import { Route, Redirect } from "react-router-dom";
+import useFetch from "../hooks/useFetch";
 
 const ProtectedRoute = ({ component: Component, ...rest }) => {
-  const userObj = useContext(UserContext);
+  console.log("protected route rendered...");
+  const { data, error } = useFetch("/api/users/current");
 
   return (
     <Route
       {...rest}
       render={(props) => {
-        if (userObj.user) {
-          return <Component {...rest} {...props} />;
-        } else {
-          props.history.push("/login");
-        }
+        return (
+          <div>
+            {error && (
+              <Redirect
+                to={{
+                  pathname: "/login",
+                  state: {
+                    from: props.location,
+                  },
+                }}
+              />
+            )}
+            {data && <Component {...rest} {...props} />}
+          </div>
+        );
       }}
     />
   );

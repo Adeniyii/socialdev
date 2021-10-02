@@ -8,7 +8,7 @@ const MongoStore = require("connect-mongo");
 const userRoute = require("./routes/userRoute");
 const authRoute = require("./routes/authRoute");
 const postRoute = require("./routes/postRoute");
-const { connectDB } = require("./controllers/db");
+const { connectDB } = require("./config/db");
 const { isAuthenticated } = require("./middlewares/auth");
 require("dotenv").config();
 
@@ -28,12 +28,13 @@ app.use(
     secret: SECRET,
     saveUninitialized: false,
     resave: false,
+    rolling: true,
     store: MongoStore.create({
       mongoUrl: MONGO_URI,
       touchAfter: 3600, //seconds
     }),
     cookie: {
-      maxAge: 1000 * 60 * 60 * 24 * 7,
+      maxAge: 1000 * 60 * 5,
       secure: process.env.NODE_ENV === "production" ? true : false,
     },
   })
@@ -56,3 +57,5 @@ mongoose.connection.on("error", (err) => {
 app.listen(port, () => {
   console.log(`Listening on port ${port} ...`);
 });
+
+module.exports = app;

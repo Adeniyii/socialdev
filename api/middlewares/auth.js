@@ -8,7 +8,7 @@ const UserModel = require("../models/UserModel");
  * @param {response} res Express response object.
  */
 async function isAuthenticated(req, res, next) {
-  if (!req.session && !req.session.userID) {
+  if (!req.session || !req.session.userID) {
     return res.status(401).json({ message: "You are not authenticated!" });
   }
 
