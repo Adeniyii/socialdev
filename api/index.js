@@ -8,7 +8,7 @@ const MongoStore = require("connect-mongo");
 const userRoute = require("./routes/userRoute");
 const authRoute = require("./routes/authRoute");
 const postRoute = require("./routes/postRoute");
-const { connectDB } = require("./controllers/db");
+const { connectDB } = require("./config/db");
 const { isAuthenticated } = require("./middlewares/auth");
 require("dotenv").config();
 
