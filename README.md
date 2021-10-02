@@ -18,15 +18,16 @@ yarn -v
 After installing nodejs install [yarn](https://www.npmjs.com/package/yarn) if you don't have it then install the project's dependencies:
 
 ```bash
+cd api
 yarn install
 ```
 
 Run the backend development server using either of the following commands:
 
 ```bash
-npm run server
+npm run dev
 # or
-yarn run server
+yarn run dev
 ```
 
 Server will be running @ [http://127.0.0.1:4000](http://127.0.0.1:4000)
